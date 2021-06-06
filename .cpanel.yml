@@ -2,4 +2,4 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/brooc12/public_html/calc
-    - /bin/cp source/* $DEPLOYPATH
+    - /bin/cp -R source/* $DEPLOYPATH
