@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.css">
+    <link rel="stylesheet" href="css/ionicons.min.css">
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/icomoon.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <title>Mortgage Payment</title>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Mortgage Calculator</h2>
+        <div class="card">
+            <!-- <div class="card-header">Login</div> -->
+            <div class="card-body">
+
+                <form>
+                    <!-- columns -->
+                    <div class="form-group">
+                        <div class="form-row align-items-center">
+                            <div class="col-md-6 mb-3">
+                                <!-- Input type text -->
+                                <label for="purchasePrice">Purchase Price</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" class="form-control" name="purchasePrice" id="purchasePrice"
+                                        value="1250000">
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 mb-3">
+                                <!-- Input type text -->
+                                <label for="downPayment">Down Payment</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="downPayment" id="downPayment"
+                                        value="20">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 mb-3">
+                                <!-- Input type text -->
+                                <label for="loanPeriod">Loan Period (years)</label>
+                                <input type="number" class="form-control" name="loanPeriod" id="loanPeriod" value="30">
+                            </div>
+
+                            <div class="col-md-2 mb-3">
+                                <!-- Input type text -->
+                                <label for="interestRate">Interest Rate</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="interestRate" id="interestRate"
+                                        value="4">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- columns -->
+                    <div class="form-group">
+                        <div class="form-row align-items-center">
+                            <div class="col-md-6 mb-3">
+                                <!-- Input type text -->
+                                <label for="annTaxes">Annual Taxes</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" name="annTaxes" id="annTaxes" value="1.2">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <!-- Input type text -->
+                                <label for="annInsurance">Annual Insurance</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                    <input type="number" class="form-control" name="annInsurance" id="annInsurance"
+                                        value="2400">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-success" name="calculateBtn" id="calculateBtn"
+                        onclick="mortgageCalc()">Calculate
+                        Monthly Payments</button>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Mortgage Calculator</h2>
+        <div class="card">
+            <!-- <div class="card-header">Login</div> -->
+            <div class="card-body">
+                <!-- <div class="col-md-6"> -->
+                <table class="table table-striped" id="results">
+                    <tbody>
+                    </tbody>
+                </table>
+                <!-- </div> -->
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        function mortgageCalc() {
+            var purchasePrice = document.getElementById('purchasePrice').value;
+            var downPayment = document.getElementById('downPayment').value / 100;
+            var loanPeriod = document.getElementById('loanPeriod').value;
+            var interestRate = document.getElementById('interestRate').value / 100;
+            var monthlyTaxes = document.getElementById('annTaxes').value / 100 * purchasePrice / 12;
+            var monthlyInsurance = document.getElementById('annInsurance').value / 12;
+
+            var loanAmnt = purchasePrice * (1 - downPayment);
+            var downAmnt = purchasePrice * downPayment;
+            var months = 12;
+            var interestPerMonth = interestRate / months;
+
+            var monthlyPmt = loanAmnt * interestPerMonth * (1 + interestPerMonth) ** (months * loanPeriod) / ((1 + interestPerMonth) ** (months * loanPeriod) - 1);
+
+            var totalMonthly = monthlyPmt + monthlyTaxes + monthlyInsurance;
+
+            monthlyPmt = monthlyPmt.toFixed(2);
+            totalMonthly = totalMonthly.toFixed(2);
+
+            var table = document.getElementById('results');
+
+            table.children[0].innerHTML = "";
+
+            var boldTotalMonthlyTxt = document.createElement('p');
+            boldTotalMonthlyTxt.setAttribute("class", "font-weight-bold");
+            boldTotalMonthlyTxt.innerHTML = "Total Monthly Payment";
+
+            var boldTotalMonthly = document.createElement('p');
+            boldTotalMonthly.setAttribute("class", "font-weight-bold");
+            boldTotalMonthly.innerHTML = "$" + totalMonthly;
+
+            addRow(table, [boldTotalMonthlyTxt.outerHTML, boldTotalMonthly.outerHTML]);
+            addRow(table, ["Monthly Principal + Interest (P&I)", "$" + monthlyPmt]);
+            addRow(table, ["Monthly Taxes", "$" + monthlyTaxes]);
+            addRow(table, ["Monthly Insurance", "$" + monthlyInsurance]);
+            // addRow(table, ["", ""]);
+            addRow(table, ["Down payment", "$" + downAmnt.toLocaleString()]);
+            addRow(table, ["Loan amount", "$" + loanAmnt.toLocaleString()]);
+        }
+
+        function addRow(table, columns) {
+            var row = document.createElement('tr');
+            columns.forEach(element => {
+                td = document.createElement('td');
+                td.innerHTML = element;
+                row.appendChild(td)
+            });
+
+            table.children[0].insertBefore(row, table.children[0].childNodes[table.children[0].childNodes.length + 1]);
+        }
+    </script>
+
+</body>
+
+</html>
